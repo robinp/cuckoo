@@ -105,11 +105,13 @@ module Data.Cuckoo
 , capacityInItems
 , itemCount
 , loadFactor
-, splitCuckooFilter
 
 -- * Debugging Utils
 , showFilter
 , itemHashes
+
+-- * Testing Utils
+, splitCuckooFilter
 ) where
 
 import Control.Applicative
@@ -337,7 +339,7 @@ newCuckooFilter salt n = do
 --
 -- This function is not thread-safe. The original CuckooFilter must not be written concurrently during the split operation.
 --
--- Mostly for testing purposes, though not restrictively.
+-- /IMPORTANT/ For testing purposes only - not all random lib choices support RNG state splitting.
 --
 splitCuckooFilter
     :: PrimMonad m 

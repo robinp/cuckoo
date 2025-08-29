@@ -37,6 +37,12 @@ initialize
     -> m (Gen (PrimState m))
 initialize salt = PCG.initialize 0 (fromIntegral salt)
 
+genSplit
+    :: PrimMonad m
+    => Gen (PrimState m)
+    -> m (Gen (PrimState m), Gen (PrimState m))
+genSplit = error "genSplit: not available in RANDOM_PCG"
+
 -- -------------------------------------------------------------------------- --
 -- MWC
 #elif defined RANDOM_MWC
@@ -51,6 +57,12 @@ initialize
     => Int
     -> m (Gen (PrimState m))
 initialize salt = MWC.initialize (singleton $ fromIntegral salt)
+
+genSplit
+    :: PrimMonad m
+    => Gen (PrimState m)
+    -> m (Gen (PrimState m), Gen (PrimState m))
+genSplit = error "genSplit: not available in RANDOM_MWC: see https://github.com/haskell/mwc-random/issues/39"
 
 -- -------------------------------------------------------------------------- --
 -- Random

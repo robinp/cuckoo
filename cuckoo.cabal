@@ -70,6 +70,7 @@ library random-internal
           , vector >=0.12
         cpp-options: -DRANDOM_MWC
     else
+        cpp-options: -DRANDOM_STANDARD
         build-depends:
           , random >=1.1
 
@@ -183,5 +184,5 @@ benchmark cuckoo-benchmarks
         -- external
         , base >=4.10 && <5
         , criterion >= 1.5
-        , primitive
+        , primitive >=0.6.4.0
 

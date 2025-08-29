@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
@@ -42,9 +43,11 @@ main = do
             [ memberBench "1:1 hit:hiss" 10000 cf10k (interleave [5000..10000] [10001..15000])
             , memberBench "only hit" 10000 cf10k [1..10000]
             ]
+#ifdef RARANDOM_STANDARD
         , bgroup "delete"
             [ deleteBench "all" 10000 cf10k [1..10000]
             ]
+#endif
         ]
 
 -- -------------------------------------------------------------------------- --
@@ -64,14 +67,14 @@ memberBench label n cf xs = bench (label <> " - " <> show n) $ whnfIO f
   where
     f = fmap length (filterM (member cf) xs)
 
+#ifdef RARANDOM_STANDARD
 deleteBench :: String -> Int -> CuckooFilter (PrimState IO) 4 10 Int -> [Int] -> Benchmark
 deleteBench label n cf0 xs = bench (label <> " - " <> show n) $ whnfIO f
   where
     f = do
         (cf, _) <- splitCuckooFilter cf0
         fmap length (filterM (delete cf) xs)
-
-
+#endif
 
 -- | Doesn't cause actual difference in bench.
 interleave :: [a] -> [a] -> [a]
