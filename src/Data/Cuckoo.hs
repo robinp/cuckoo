@@ -105,6 +105,7 @@ module Data.Cuckoo
 , capacityInItems
 , itemCount
 , loadFactor
+, splitCuckooFilter
 
 -- * Debugging Utils
 , showFilter
@@ -332,6 +333,24 @@ newCuckooFilter salt n = do
         | not (64 <= n) = error "Seriously? Are you kidding me? If you need to represent such a tiny set, you'll have to pick another data structure for that"
         | otherwise = return ()
 
+-- | Creates two new 'CuckooFilter's with identical data as the original, and with the RNG state split.
+--
+-- This function is not thread-safe. The original CuckooFilter must not be written concurrently during the split operation.
+--
+-- Mostly for testing purposes, though not restrictively.
+--
+splitCuckooFilter
+    :: PrimMonad m 
+    => CuckooFilter (PrimState m) b f a
+    -> m (CuckooFilter (PrimState m) b f a, CuckooFilter (PrimState m) b f a)
+splitCuckooFilter (CuckooFilter bc s rng d) = do
+    len <- getSizeofMutableByteArray d
+    d0 <- cloneMutableByteArray d 0 len
+    d1 <- cloneMutableByteArray d 0 len
+    (g0, g1) <- genSplit rng
+    return $! (CuckooFilter bc s g0 d0, CuckooFilter bc s g1 d1)
+
+
 -- -------------------------------------------------------------------------- --
 -- Insert
 
@@ -401,6 +420,7 @@ insert f a = do
         setFingerprint f b i k
         return k'
     {-# INLINE swapFingerprint #-}
+{-# INLINABLE insert #-}
 
 -- -------------------------------------------------------------------------- --
 -- Member Test
@@ -492,6 +512,7 @@ delete f a = do
         Nothing -> checkBucket f b2 fp >>= \case
             Just i -> True <$ setFingerprint f b2 i null
             Nothing -> return False
+{-# INLINABLE delete #-}
 
 -- -------------------------------------------------------------------------- --
 -- Internal

@@ -20,6 +20,7 @@ module System.Random.Internal
 , initialize
 , uniform
 , uniformR
+, genSplit
 ) where
 
 -- -------------------------------------------------------------------------- --
@@ -95,5 +96,17 @@ uniform gen = stToPrim $ do
     writeSTRef gen g
     return r
 
+-- | Odd name to avoid collision with splitGen.
+-- Using legacy 'split' name for version compatibility.
+genSplit
+    :: PrimMonad m
+    => Gen (PrimState m)
+    -> m (Gen (PrimState m), Gen (PrimState m))
+genSplit gen = stToPrim $ do
+    g <- readSTRef gen
+    let (!g0, !g1) = split g
+    s0 <- newSTRef g0
+    s1 <- newSTRef g1
+    return $ s0 `seq` s1 `seq` (s0, s1)
 #endif
 
