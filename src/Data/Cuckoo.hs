@@ -377,6 +377,11 @@ splitCuckooFilter (CuckooFilter bc s rng d) = do
 -- function. If this function is used in the presence of asynchronous exceptions
 -- it should be apprioriately masked.
 --
+-- Note: if the potentially inserted elements have many repetitions, and you
+-- don't intend to delete items, rather just use the filter as a set, then it is
+-- advised to perform a 'member' check before insert. Otherwise repeated items
+-- will take up slots and cause high load or even premature insertion failure.
+--
 -- >>> f <- newCuckooFilter @4 @10 @Int 0 1000
 -- >>> insert f 0
 -- True
