@@ -342,7 +342,7 @@ newCuckooFilter salt n = do
 -- /IMPORTANT/ For testing purposes only - not all random lib choices support RNG state splitting.
 --
 splitCuckooFilter
-    :: PrimMonad m 
+    :: PrimMonad m
     => CuckooFilter (PrimState m) b f a
     -> m (CuckooFilter (PrimState m) b f a, CuckooFilter (PrimState m) b f a)
 splitCuckooFilter (CuckooFilter bc s rng d) = do
