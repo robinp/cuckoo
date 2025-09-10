@@ -43,7 +43,7 @@ main = do
             [ memberBench "1:1 hit:hiss" 10000 cf10k (interleave [5000..10000] [10001..15000])
             , memberBench "only hit" 10000 cf10k [1..10000]
             ]
-#ifdef RARANDOM_STANDARD
+#ifdef RANDOM_STANDARD
         , bgroup "delete"
             [ deleteBench "all" 10000 cf10k [1..10000]
             ]
