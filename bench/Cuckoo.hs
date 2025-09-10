@@ -67,7 +67,7 @@ memberBench label n cf xs = bench (label <> " - " <> show n) $ whnfIO f
   where
     f = fmap length (filterM (member cf) xs)
 
-#ifdef RARANDOM_STANDARD
+#ifdef RANDOM_STANDARD
 deleteBench :: String -> Int -> CuckooFilter (PrimState IO) 4 10 Int -> [Int] -> Benchmark
 deleteBench label n cf0 xs = bench (label <> " - " <> show n) $ whnfIO f
   where
